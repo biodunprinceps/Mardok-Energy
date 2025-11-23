@@ -21,15 +21,80 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen p-8">
-  <div class="max-w-4xl mx-auto">
+
+  <!-- Login Screen -->
+  <div id="loginScreen" class="max-w-md mx-auto">
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <div class="text-center mb-8">
+        <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Admin Access</h1>
+        <p class="text-gray-600">Enter your credentials to manage prices</p>
+      </div>
+
+      <form id="loginForm" class="space-y-6">
+        <div>
+          <label for="email" class="block text-sm font-semibold mb-2">Email Address</label>
+          <input type="email" id="email" required
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none"
+            placeholder="admin@martdokpetroleum.com">
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-semibold mb-2">Password</label>
+          <input type="password" id="password" required
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none"
+            placeholder="Enter your password">
+        </div>
+
+        <div id="loginError" class="hidden bg-red-100 border-2 border-red-500 rounded-lg p-3 text-red-700 text-sm">
+          <strong>Access Denied:</strong> Invalid credentials or unauthorized IP address.
+        </div>
+
+        <button type="submit"
+          class="w-full bg-primary text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 transition">
+          🔓 Login to Admin Panel
+        </button>
+      </form>
+
+      <div class="mt-6 p-4 bg-gray-100 rounded-lg text-sm text-gray-600">
+        <div class="flex items-start">
+          <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clip-rule="evenodd" />
+          </svg>
+          <div>
+            <strong>Security Notice:</strong> Only authorized administrators with registered email addresses can access
+            this panel.
+            Your IP address: <span id="userIP" class="font-mono">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel (Hidden until login) -->
+  <div id="adminPanel" class="max-w-4xl mx-auto hidden">
     <div class="bg-white rounded-2xl shadow-xl p-8">
       <div class="flex items-center justify-between mb-8">
         <div>
           <h1 class="text-3xl font-bold mb-2">Diesel Price Manager</h1>
           <p class="text-gray-600">Update daily diesel prices</p>
+          <p class="text-sm text-gray-500 mt-1">Logged in as: <span id="loggedInEmail" class="font-semibold"></span></p>
         </div>
-        <div class="bg-primary text-black px-6 py-2 rounded-full font-semibold">
-          Admin Panel
+        <div class="flex items-center gap-3">
+          <div class="bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold text-sm">
+            ✓ Authenticated
+          </div>
+          <button onclick="logout()"
+            class="bg-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-red-600">
+            Logout
+          </button>
         </div>
       </div>
 
@@ -172,6 +237,128 @@
   </div>
 
   <script>
+    // ==========================================
+    // SECURITY CONFIGURATION - UPDATE THESE!
+    // ==========================================
+
+    const AUTHORIZED_USERS = [{
+        email: 'admin@admin.com',
+        password: '12345678!' // C HANGE THIS PASSWORD!
+      },
+      {
+        email: 'manager@martdokpetroleum.com',
+        password: 'Manager2025!' // CHANGE THIS PASSWORD!
+      }
+      // Add more authorized users here
+    ];
+
+    // Optional: Whitelist specific IP addresses (leave empty to allow all IPs)
+    const WHITELISTED_IPS = [
+      // '192.168.1.100', // Example: Your office IP
+      // '41.58.123.45'   // Example: Your home IP
+      // Leave empty to allow any IP (email/password only)
+    ];
+
+    // ==========================================
+    // AUTHENTICATION SYSTEM
+    // ==========================================
+
+    let userIP = 'Unknown';
+    let isAuthenticated = false;
+
+    // Get user's IP address
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        userIP = data.ip;
+        document.getElementById('userIP').textContent = userIP;
+        checkIPWhitelist();
+      })
+      .catch(() => {
+        document.getElementById('userIP').textContent = 'Unable to detect';
+      });
+
+    function checkIPWhitelist() {
+      // If whitelist is empty, skip IP check
+      if (WHITELISTED_IPS.length === 0) return;
+
+      // Check if current IP is whitelisted
+      if (!WHITELISTED_IPS.includes(userIP)) {
+        document.getElementById('loginError').textContent =
+          `Access restricted. Your IP address (${userIP}) is not authorized.`;
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.toLowerCase().trim();
+      const password = document.getElementById('password').value;
+
+      // Check IP whitelist first (if configured)
+      if (WHITELISTED_IPS.length > 0 && !WHITELISTED_IPS.includes(userIP)) {
+        showError(`Your IP address (${userIP}) is not authorized to access this panel.`);
+        return;
+      }
+
+      // Check credentials
+      const user = AUTHORIZED_USERS.find(u =>
+        u.email.toLowerCase() === email && u.password === password
+      );
+
+      if (user) {
+        // Successful login
+        isAuthenticated = true;
+        sessionStorage.setItem('adminAuth', 'true');
+        sessionStorage.setItem('adminEmail', email);
+        showAdminPanel(email);
+      } else {
+        showError('Invalid email or password. Please try again.');
+      }
+    });
+
+    function showError(message) {
+      const errorDiv = document.getElementById('loginError');
+      errorDiv.innerHTML = `<strong>Access Denied:</strong> ${message}`;
+      errorDiv.classList.remove('hidden');
+
+      // Shake animation
+      errorDiv.style.animation = 'shake 0.5s';
+      setTimeout(() => errorDiv.style.animation = '', 500);
+    }
+
+    function showAdminPanel(email) {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      document.getElementById('loggedInEmail').textContent = email;
+
+      // Load saved prices
+      loadPrices();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('adminAuth');
+      sessionStorage.removeItem('adminEmail');
+      isAuthenticated = false;
+      location.reload();
+    }
+
+    // Check if already logged in
+    window.addEventListener('load', () => {
+      const isLoggedIn = sessionStorage.getItem('adminAuth');
+      const email = sessionStorage.getItem('adminEmail');
+
+      if (isLoggedIn && email) {
+        showAdminPanel(email);
+      }
+    });
+
+    // ==========================================
+    // PRICE MANAGEMENT (Original Code)
+    // ==========================================
+
     const form = document.getElementById('priceForm');
     const codeOutput = document.getElementById('codeOutput');
     const generatedCode = document.getElementById('generatedCode');
@@ -179,6 +366,12 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      if (!isAuthenticated) {
+        alert('Please login first');
+        return;
+      }
+
       generateCode();
     });
 
@@ -196,6 +389,9 @@
       generatedCode.textContent = code;
       codeOutput.classList.remove('hidden');
       successMessage.classList.remove('hidden');
+
+      // Save to localStorage
+      savePrices();
 
       // Scroll to code
       codeOutput.scrollIntoView({
@@ -219,8 +415,7 @@
       });
     }
 
-    // Load prices from localStorage if available
-    window.addEventListener('load', () => {
+    function loadPrices() {
       const savedPrices = localStorage.getItem('dieselPrices');
       if (savedPrices) {
         const prices = JSON.parse(savedPrices);
@@ -228,19 +423,32 @@
         document.getElementById('price-commercial').value = prices.commercial;
         document.getElementById('price-industrial').value = prices.industrial;
       }
+    }
+
+    function savePrices() {
+      const prices = {
+        small: document.getElementById('price-small').value,
+        commercial: document.getElementById('price-commercial').value,
+        industrial: document.getElementById('price-industrial').value
+      };
+      localStorage.setItem('dieselPrices', JSON.stringify(prices));
+    }
+
+    // Save prices when changed
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+      input.addEventListener('change', savePrices);
     });
 
-    // Save prices to localStorage when changed
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-      input.addEventListener('change', () => {
-        const prices = {
-          small: document.getElementById('price-small').value,
-          commercial: document.getElementById('price-commercial').value,
-          industrial: document.getElementById('price-industrial').value
-        };
-        localStorage.setItem('dieselPrices', JSON.stringify(prices));
-      });
-    });
+    // Add shake animation
+    const style = document.createElement('style');
+    style.textContent = `
+@keyframesshake{
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 
