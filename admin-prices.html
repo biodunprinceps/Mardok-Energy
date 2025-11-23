@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price Admin - Mart Dok Petroleum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#efb105',
+            secondary: '#000000',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">Diesel Price Manager</h1>
+          <p class="text-gray-600">Update daily diesel prices</p>
+        </div>
+        <div class="bg-primary text-black px-6 py-2 rounded-full font-semibold">
+          Admin Panel
+        </div>
+      </div>
+
+      <form id="priceForm" class="space-y-6">
+        <!-- Small Business -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="bg-primary text-black w-10 h-10 rounded-full flex items-center justify-center mr-3">1</span>
+            Small Business
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Price per Litre (₦)</label>
+              <input type="number" id="price-small" value="850"
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none text-lg font-semibold">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">Volume Range</label>
+              <input type="text" value="500 - 2,000 litres" disabled
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-100 text-gray-600">
+            </div>
+          </div>
+        </div>
+
+        <!-- Commercial -->
+        <div class="border-2 border-primary rounded-xl p-6 bg-primary bg-opacity-5">
+          <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="bg-primary text-black w-10 h-10 rounded-full flex items-center justify-center mr-3">2</span>
+            Commercial (Most Popular)
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Price per Litre (₦)</label>
+              <input type="number" id="price-commercial" value="820"
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none text-lg font-semibold">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">Volume Range</label>
+              <input type="text" value="2,000 - 10,000 litres" disabled
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-100 text-gray-600">
+            </div>
+          </div>
+        </div>
+
+        <!-- Industrial -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="bg-primary text-black w-10 h-10 rounded-full flex items-center justify-center mr-3">3</span>
+            Industrial
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Price per Litre (₦)</label>
+              <input type="number" id="price-industrial" value="790"
+                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none text-lg font-semibold">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">Volume Range</label>
+              <input type="text" value="10,000+ litres" disabled
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-100 text-gray-600">
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 pt-6 border-t-2">
+          <button type="submit"
+            class="flex-1 bg-primary text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 transition transform hover:scale-105">
+            💾 Update Prices
+          </button>
+          <button type="button" onclick="generateCode()"
+            class="flex-1 bg-black text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-800 transition">
+            📋 Generate Code
+          </button>
+        </div>
+      </form>
+
+      <!-- Generated Code Display -->
+      <div id="codeOutput" class="hidden mt-8 p-6 bg-gray-900 rounded-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-white font-bold text-lg">📝 Updated Code (Copy & Paste into index.html)</h3>
+          <button onclick="copyCode()"
+            class="bg-primary text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
+            Copy Code
+          </button>
+        </div>
+        <pre id="generatedCode" class="text-green-400 text-sm overflow-x-auto"></pre>
+      </div>
+
+      <!-- Success Message -->
+      <div id="successMessage" class="hidden mt-6 bg-green-100 border-2 border-green-500 rounded-xl p-4">
+        <div class="flex items-center text-green-800">
+          <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd" />
+          </svg>
+          <span class="font-semibold">Prices generated successfully! Copy the code and paste it into your index.html
+            file.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mt-6">
+      <h2 class="text-2xl font-bold mb-4">📖 How to Update Prices</h2>
+      <ol class="space-y-3 text-gray-700">
+        <li class="flex items-start">
+          <span
+            class="bg-primary text-black w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 text-sm font-bold">1</span>
+          <span><strong>Enter new prices</strong> in the input fields above</span>
+        </li>
+        <li class="flex items-start">
+          <span
+            class="bg-primary text-black w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 text-sm font-bold">2</span>
+          <span><strong>Click "Generate Code"</strong> to create the updated JavaScript</span>
+        </li>
+        <li class="flex items-start">
+          <span
+            class="bg-primary text-black w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 text-sm font-bold">3</span>
+          <span><strong>Copy the generated code</strong> from the box below</span>
+        </li>
+        <li class="flex items-start">
+          <span
+            class="bg-primary text-black w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 text-sm font-bold">4</span>
+          <span><strong>Open index.html</strong> and find the "DYNAMIC PRICING SYSTEM" section (around line 1040)</span>
+        </li>
+        <li class="flex items-start">
+          <span
+            class="bg-primary text-black w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 text-sm font-bold">5</span>
+          <span><strong>Replace the dieselPrices object</strong> with the new values</span>
+        </li>
+        <li class="flex items-start">
+          <span
+            class="bg-primary text-black w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 text-sm font-bold">6</span>
+          <span><strong>Save and refresh</strong> your website to see the updated prices!</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('priceForm');
+    const codeOutput = document.getElementById('codeOutput');
+    const generatedCode = document.getElementById('generatedCode');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      generateCode();
+    });
+
+    function generateCode() {
+      const smallPrice = document.getElementById('price-small').value;
+      const commercialPrice = document.getElementById('price-commercial').value;
+      const industrialPrice = document.getElementById('price-industrial').value;
+
+      const code = `const dieselPrices = {
+  small: ${smallPrice},      // Small Business (500-2,000 litres)
+  commercial: ${commercialPrice}, // Commercial (2,000-10,000 litres)
+  industrial: ${industrialPrice}  // Industrial (10,000+ litres)
+};`;
+
+      generatedCode.textContent = code;
+      codeOutput.classList.remove('hidden');
+      successMessage.classList.remove('hidden');
+
+      // Scroll to code
+      codeOutput.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+
+    function copyCode() {
+      const code = generatedCode.textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('bg-green-500');
+
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('bg-green-500');
+        }, 2000);
+      });
+    }
+
+    // Load prices from localStorage if available
+    window.addEventListener('load', () => {
+      const savedPrices = localStorage.getItem('dieselPrices');
+      if (savedPrices) {
+        const prices = JSON.parse(savedPrices);
+        document.getElementById('price-small').value = prices.small;
+        document.getElementById('price-commercial').value = prices.commercial;
+        document.getElementById('price-industrial').value = prices.industrial;
+      }
+    });
+
+    // Save prices to localStorage when changed
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+      input.addEventListener('change', () => {
+        const prices = {
+          small: document.getElementById('price-small').value,
+          commercial: document.getElementById('price-commercial').value,
+          industrial: document.getElementById('price-industrial').value
+        };
+        localStorage.setItem('dieselPrices', JSON.stringify(prices));
+      });
+    });
+  </script>
+</body>
+
+</html>
