@@ -187,6 +187,12 @@
       animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 
+    /* Admin icon rotation */
+    a[href="admin-prices.html"]:hover i {
+      display: inline-block;
+      animation: spin 0.5s ease-in-out;
+    }
+
     /* Responsive utilities */
     <blade media|%20(max-width%3A%20768px)%20%7B>.whatsapp-float {
       width: 52px;
@@ -215,6 +221,16 @@
     input,
     textarea {
       transition: all 0.2s ease;
+    }
+
+    /* Admin icon - subtle and hidden */
+    #admin-icon i {
+      transition: all 0.3s ease;
+    }
+
+    #admin-icon:hover i {
+      transform: rotate(90deg);
+      color: #efb105;
     }
   </style>
 </head>
@@ -399,7 +415,14 @@
   <section id="pricing" class="py-12 sm:py-16 lg:py-20 bg-gray-50">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600">
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Today's <span class="text-primary">Pricing</span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+          Today's <span class="text-primary">Pricing</span>
+          <!-- Admin Icon -->
+          <a href="admin-prices.html"
+            class="inline-block ml-3 bg-black text-primary w-10 h-10 rounded-full align-middle hover:bg-primary hover:text-black transition-all transform hover:scale-110 hover:rotate-90 shadow-lg"
+            title="Admin: Update Prices" aria-label="Access price admin panel">
+            <i class="fas fa-cog text-sm leading-10"></i>
+          </a>
         </h2>
         <p class="text-gray-600 text-lg">Competitive rates updated daily</p>
         <div class="inline-block bg-primary text-black px-6 py-2 rounded-full mt-4 font-semibold">
@@ -468,45 +491,85 @@
   </section>
 
   <!-- How to Order Section -->
-  <section id="how-to-order" class="py-12 sm:py-16 lg:py-20 bg-black text-white">
+  <section id="how-to-order" class="py-12 sm:py-16 lg:py-20 bg-white">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16" data-aos="fade-up" data-aos-duration="600">
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">How to <span class="text-primary">Order</span></h2>
-        <p class="text-gray-400 text-lg">Get your diesel delivered in 4 simple steps</p>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">HOW TO <span class="text-primary">ORDER</span></h2>
       </div>
 
-      <div class="grid md:grid-cols-4 gap-8">
-        <div class="text-center" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-          <div
-            class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-black text-3xl font-bold">
-            1
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <!-- Left: Order Methods -->
+        <div class="space-y-6" data-aos="fade-right" data-aos-duration="600">
+          <!-- 1. Via Website -->
+          <div class="order-method flex items-start p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+            data-image="website">
+            <div
+              class="bg-primary text-black w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xl mr-4">
+              1
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Via Website</h3>
+              <p class="text-gray-600">Fill out our online order form and get instant confirmation</p>
+            </div>
           </div>
-          <h3 class="text-xl font-bold mb-3">Select Quantity</h3>
-          <p class="text-gray-400">Choose the amount of diesel you need for your operations</p>
+
+          <!-- 2. Via WhatsApp -->
+          <div class="order-method flex items-start p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+            data-image="whatsapp">
+            <div
+              class="bg-primary text-black w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xl mr-4">
+              2
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Via WhatsApp</h3>
+              <p class="text-gray-600">Send us a message via our WhatsApp sales channel, +234 800 000 0000</p>
+            </div>
+          </div>
+
+          <!-- 3. Via Call -->
+          <div class="order-method flex items-start p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+            data-image="call">
+            <div
+              class="bg-primary text-black w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xl mr-4">
+              3
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Via Call</h3>
+              <p class="text-gray-600">To place an order via call just dial our sales line, +234 800 000 0000</p>
+            </div>
+          </div>
+
+          <!-- 4. Via Email -->
+          <div class="order-method flex items-start p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+            data-image="email">
+            <div
+              class="bg-primary text-black w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xl mr-4">
+              4
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Via Email</h3>
+              <p class="text-gray-600">Email your order details to info@martdokpetroleum.com</p>
+            </div>
+          </div>
+
+          <!-- 5. Visit Office -->
+          <div class="order-method flex items-start p-4 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+            data-image="office">
+            <div
+              class="bg-primary text-black w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xl mr-4">
+              5
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Visit Our Office</h3>
+              <p class="text-gray-600">Come to our office for personalized face-to-face service</p>
+            </div>
+          </div>
         </div>
 
-        <div class="text-center" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
-          <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-black">
-            <i class="fas fa-shopping-cart text-3xl"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Place Order</h3>
-          <p class="text-gray-400">Fill out the form or contact us via WhatsApp</p>
-        </div>
-
-        <div class="text-center" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-          <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-black">
-            <i class="fas fa-credit-card text-3xl"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Confirm Payment</h3>
-          <p class="text-gray-400">Secure payment options available for your convenience</p>
-        </div>
-
-        <div class="text-center" data-aos="fade-up" data-aos-duration="600" data-aos-delay="150">
-          <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-black">
-            <i class="fas fa-shipping-fast text-3xl"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Get Delivery</h3>
-          <p class="text-gray-400">Fast delivery to your specified location</p>
+        <!-- Right: App Screenshot Image -->
+        <div class="flex justify-center items-center" data-aos="fade-left" data-aos-duration="600">
+          <img id="order-image" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=600&fit=crop"
+            alt="Order via website" class="rounded-3xl shadow-2xl max-w-md w-full transition-all duration-500">
         </div>
       </div>
     </div>
@@ -1202,6 +1265,29 @@
       day: 'numeric'
     };
     currentDateElement.textContent = today.toLocaleDateString('en-US', options);
+
+    // How to Order - Image switching on hover
+    const orderMethods = document.querySelectorAll('.order-method');
+    const orderImage = document.getElementById('order-image');
+
+    const orderImages = {
+      website: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=600&fit=crop',
+      whatsapp: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=500&h=600&fit=crop',
+      call: 'https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=500&h=600&fit=crop',
+      email: 'https://images.unsplash.com/photo-1557200134-90327ee9fafa?w=500&h=600&fit=crop',
+      office: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&h=600&fit=crop'
+    };
+
+    orderMethods.forEach(method => {
+      method.addEventListener('mouseenter', () => {
+        const imageType = method.getAttribute('data-image');
+        orderImage.style.opacity = '0.5';
+        setTimeout(() => {
+          orderImage.src = orderImages[imageType];
+          orderImage.style.opacity = '1';
+        }, 200);
+      });
+    });
 
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
